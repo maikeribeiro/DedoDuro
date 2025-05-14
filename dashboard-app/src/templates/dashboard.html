@@ -18,6 +18,7 @@
             border: 1px solid #ddd;
             padding: 8px;
             text-align: center;
+            white-space: pre-line;
         }
         th {
             background-color: #f2f2f2;
@@ -34,24 +35,41 @@
     </style>
 </head>
 <body>
-    <h1>Dashboard</h1>
+    <h1 style="text-align:center;">STATUS DE LANÇAMENTO DO CEP</h1>
     {% if data is not none %}
     <table>
         <thead>
             <tr>
-                <th>Data</th>
-                <th>1º - Manhã</th>
-                <th>2º - Tarde</th>
-                <th>3º - Noite</th>
+                <th rowspan="2">Data</th>
+                {% for mp in ['MP3', 'MP4', 'MP8', 'MP12'] %}
+                    <th class="mp-header" colspan="3" style="background:#e0e0e0; border-right:2px solid #888;">{{ mp }}</th>
+                {% endfor %}
+            </tr>
+            <tr>
+                {% for mp in ['MP3', 'MP4', 'MP8', 'MP12'] %}
+                    <th style="border-right:1px solid #888;">1º - Manhã</th>
+                    <th style="border-right:1px solid #888;">2º - Tarde</th>
+                    <th style="border-right:2px solid #888;">3º - Noite</th>
+                {% endfor %}
             </tr>
         </thead>
         <tbody>
             {% for row in data.itertuples() %}
             <tr>
                 <td>{{ row[1] }}</td>
-                <td>{{ row[2] }}</td>
-                <td>{{ row[3] }}</td>
-                <td>{{ row[4] }}</td>
+                {% for i in range(2, 14) %}
+                    <td style="{% if (i-2) % 3 == 2 %}border-right:2px solid #888;{% endif %}">
+                        {% if row[i] == "🔴" %}
+                            <span style="font-size:20px;">🔴</span>
+                        {% elif row[i] == "X" %}
+                            <span style="font-size:20px;">🔴</span>
+                        {% elif row[i] == "🟢" %}
+                            <span style="font-size:20px;">🟢</span>
+                        {% else %}
+                            {{ row[i] }}
+                        {% endif %}
+                    </td>
+                {% endfor %}
             </tr>
             {% endfor %}
         </tbody>
