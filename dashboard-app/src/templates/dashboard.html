@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .status {
+            font-size: 24px;
+        }
+        .green {
+            color: green;
+        }
+        .red {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <h1>Dashboard</h1>
+    {% if data is not none %}
+    <table>
+        <thead>
+            <tr>
+                <th>Data</th>
+                <th>1º - Manhã</th>
+                <th>2º - Tarde</th>
+                <th>3º - Noite</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in data.itertuples() %}
+            <tr>
+                <td>{{ row[1] }}</td>
+                <td>{{ row[2] }}</td>
+                <td>{{ row[3] }}</td>
+                <td>{{ row[4] }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+        <p>Nenhum dado disponível.</p>
+        {% if error %}
+            <p style="color:red;">{{ error }}</p>
+        {% endif %}
+    {% endif %}
+</body>
+</html>
