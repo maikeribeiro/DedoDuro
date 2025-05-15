@@ -149,7 +149,7 @@ def process_multiple_mps(files):
 
     df_final = df_final.sort_values('DATA', ascending=False)
     df_final['DataFormatada'] = df_final['DATA'].dt.strftime('%d/%m/%Y')
-    df_final = df_final.head(30)
+    df_final = df_final.head(10)
     cols = ['DataFormatada']
     for mp in files.keys():
         cols += [f'{mp}_Noite', f'{mp}_Manha', f'{mp}_Tarde']
