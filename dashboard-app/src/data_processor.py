@@ -110,11 +110,11 @@ def process_mp(filepath):
 
     # Gera todas as combinações possíveis de DATA x TURNO nos últimos 30 dias
     dias = ultimos_30['DATA'].dropna().dt.normalize().unique()
-    turnos = ['1º - Manhã', '2º - Tarde', '3º - Noite']
+    turnos = ['3º - Noite', '1º - Manhã', '2º - Tarde']  # ordem ajustada
     idx = pd.MultiIndex.from_product([dias, turnos], names=['DATA', 'Turno'])
     # Junta com os dados existentes
     tabela = ultimos_30.set_index(['DATA', 'Turno'])[['Status']].reindex(idx).reset_index()
-    tabela['Status'] = tabela['Status'].fillna("X")
+    tabela['Status'] = tabela['Status'].fillna("🔴")  # só bolinha vermelha
 
     # Pivot para formato final
     tabela = tabela.pivot(index='DATA', columns='Turno', values='Status').reset_index()
@@ -123,10 +123,10 @@ def process_mp(filepath):
         '2º - Tarde': 'Tarde',
         '3º - Noite': 'Noite'
     })
-    for col in ['Manha', 'Tarde', 'Noite']:
+    for col in ['Noite', 'Manha', 'Tarde']:
         if col not in tabela.columns:
-            tabela[col] = "X"
-    tabela = tabela[['DATA', 'Manha', 'Tarde', 'Noite']]
+            tabela[col] = "🔴"
+    tabela = tabela[['DATA', 'Noite', 'Manha', 'Tarde']]
     return tabela
 
 def process_multiple_mps(files):
@@ -134,9 +134,9 @@ def process_multiple_mps(files):
     for mp, path in files.items():
         tabela = process_mp(path)
         tabela = tabela.rename(columns={
+            'Noite': f'{mp}_Noite',
             'Manha': f'{mp}_Manha',
-            'Tarde': f'{mp}_Tarde',
-            'Noite': f'{mp}_Noite'
+            'Tarde': f'{mp}_Tarde'
         })
         all_tables[mp] = tabela
 
@@ -152,11 +152,11 @@ def process_multiple_mps(files):
     df_final = df_final.head(30)
     cols = ['DataFormatada']
     for mp in files.keys():
-        cols += [f'{mp}_Manha', f'{mp}_Tarde', f'{mp}_Noite']
+        cols += [f'{mp}_Noite', f'{mp}_Manha', f'{mp}_Tarde']
     for col in cols:
         if col not in df_final.columns:
             df_final[col] = "🔴"
     df_final = df_final[cols]
     df_final = df_final.fillna("🔴").reset_index(drop=True)
-    df_final.columns = ['Data'] + [f'{mp}\n{turno}' for mp in files.keys() for turno in ['1º - Manhã', '2º - Tarde', '3º - Noite']]
+    df_final.columns = ['Data'] + [f'{mp}\n{turno}' for mp in files.keys() for turno in ['3º - Noite', '1º - Manhã', '2º - Tarde']]
     return df_final
