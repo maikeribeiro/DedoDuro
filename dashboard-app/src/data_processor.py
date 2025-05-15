@@ -101,8 +101,20 @@ def process_mp(filepath):
     except ValueError:
         data_cols = base_cols[2:5]  # fallback
 
+    # Adiciona coluna de observação normalizada
+    obs_col = None
+    for col in df.columns:
+        if str(col).strip().lower().startswith('observa'):
+            obs_col = col
+            break
+
+    # Função para status/observação
     def status_bolinha_row(row):
-        return "🟢" if any(pd.notna(row[c]) and str(row[c]).strip() != "" for c in data_cols) else "🔴"
+        if any(pd.notna(row[c]) and str(row[c]).strip() != "" for c in data_cols):
+            return "🟢"
+        if obs_col and pd.notna(row.get(obs_col, None)) and str(row[obs_col]).strip() != "":
+            return str(row[obs_col]).strip()
+        return "🔴"
     ultimos_30['Status'] = ultimos_30.apply(status_bolinha_row, axis=1)
 
     # Remove duplicatas para DATA+Turno, mantendo o primeiro registro
