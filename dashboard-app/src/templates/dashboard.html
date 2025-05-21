@@ -35,6 +35,7 @@
             position: sticky;
             top: 0;
             z-index: 2;
+            font-size: 21px; /* 50% maior */
         }
         .status {
             font-size: 20px;
@@ -101,7 +102,7 @@
     <table>
         <thead>
             <tr>
-                <th rowspan="2" style="min-width:90px;max-width:110px;">Data</th>
+                <th rowspan="2" style="min-width:90px;max-width:110px; font-size:21px;">Data</th>
                 {% for mp in ['MP3', 'MP4', 'MP8', 'MP12'] %}
                     <th class="mp-header" colspan="3" style="min-width:180px;">{{ mp }}</th>
                 {% endfor %}
@@ -116,8 +117,9 @@
         </thead>
         <tbody>
             {% for row in data.itertuples() %}
+            {% set all_green = row[2:14]|list|select('equalto', '🟢')|list|length == 12 %}
             <tr style="height:32px;">
-                <td style="font-weight:bold;">{{ row[1] }}</td>
+                <td style="font-weight:bold;{% if all_green %} color:#4caf50;{% endif %} font-size:21px;">{{ row[1] }}</td>
                 {% for i in range(2, 14) %}
                     <td style="{% if (i-2) % 3 == 2 %}border-right:2px solid #888;{% endif %}">
                         {% if row[i] == "🔴" %}
